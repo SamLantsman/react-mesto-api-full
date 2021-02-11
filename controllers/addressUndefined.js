@@ -1,7 +1,5 @@
-const path = require("path");
-
 const displayUndefinedAddress = (req, res) => {
-  res.status(400).send({ message: "Запрашиваемый ресурс не найден" });
+  res.status(404).send(JSON.stringify({ message: 'Запрашиваемый ресурс не найден' }));
 };
 
 module.exports = displayUndefinedAddress;
