@@ -15,7 +15,5 @@ app.use('/', cardsRouter);
 app.use('/', undefinedRouter);
 
 app.listen(PORT, () => {
-  /* eslint no-console: "error" */
-  // eslint-disable-next-line no-console
   console.log(`App is listening on ${PORT} port`);
 });
