@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const displayUndefinedAddress = require('../controllers/addressUndefined');
 
-router.get('/*', displayUndefinedAddress);
+router.use('/*', displayUndefinedAddress);
 
 module.exports = router;
