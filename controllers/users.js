@@ -10,11 +10,13 @@ const getUsers = (req, res) => UserModel.find({})
 
 const getProfile = (req, res) => UserModel.findById(req.params.id)
   .then((user) => {
-    res.status(200).send(user);
+    if (!user) {
+      res.status(404).send({ message: 'Нет такого пользователя, попробуйте другой айди' });
+    } res.status(200).send(user);
   })
   .catch((err) => {
     if (err.kind === 'ObjectId') {
-      res.status(404).send({ message: 'Такого пользователя нет, проверьте айди.' });
+      res.status(400).send({ message: 'Такого пользователя нет, проверьте айди.' });
     } res.status(500).send({ message: 'Произошла ошибка' });
   });
 
@@ -34,11 +36,12 @@ const updateProfile = (req, res) => {
   const id = req.user._id;
   UserModel.findByIdAndUpdate(id, { name, about }, {
     new: true,
+    runValidators: true,
   })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(400).send({ message: 'Переданы некорректные данные. Возможно, вы заполнили не все поля в теле запроса.' });
       } res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
@@ -48,6 +51,7 @@ const updateAvatar = (req, res) => {
   const id = req.user._id;
   UserModel.findByIdAndUpdate(id, { avatar }, {
     new: true,
+    runValidators: true,
   })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
