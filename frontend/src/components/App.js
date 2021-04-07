@@ -144,7 +144,6 @@ function App() {
     api
       .addNewCard(newCard)
       .then((newCard) => {
-        console.log(newCard);
         setCards([newCard.data, ...cards]);
       })
       .catch((err) => {
@@ -170,7 +169,7 @@ function App() {
     api
       .updateUserInfo(data)
       .then((newUser) => {
-        setCurrentUser(newUser);
+        setCurrentUser(newUser.data);
       })
       .catch((err) => {
         console.log(err);
@@ -185,7 +184,7 @@ function App() {
     api
       .updateAvatar(link)
       .then((userWithNewAvatar) => {
-        setCurrentUser(userWithNewAvatar);
+        setCurrentUser(userWithNewAvatar.data);
       })
       .catch((err) => {
         console.log(err);
@@ -252,7 +251,6 @@ function App() {
           setIsRegistered(true);
           setIsInfoToolTopPopupOpen(true);
         } else {
-          console.log(isRegistered);
           setIsInfoToolTopPopupOpen(true);
           return {
             message: "Что-то пошло не так!",

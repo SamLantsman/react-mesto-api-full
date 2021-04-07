@@ -48,8 +48,8 @@ app.use('*', cors(options));
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
     password: Joi.string().required().min(1).max(30),
+    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
   }),
 }), createUser);
 app.post('/signin', celebrate({
