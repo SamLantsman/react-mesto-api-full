@@ -34,8 +34,8 @@ app.use(requestLogger);
 const options = {
   origin: [
     'http://localhost:3000',
-    'https://ваш домен с документа',
-    'https://your-name-of.github.io',
+    'http://api.sams.domain.students.nomoredomains.icu',
+    'http://sams.domain.students.nomoredomains.icu',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   reflightContinue: false,
