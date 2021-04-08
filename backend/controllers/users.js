@@ -7,12 +7,18 @@ const BadRequestError = require('../errors/bad-request-err');
 const UnauthorizedError = require('../errors/unauthorized-error');
 
 const getUser = (req, res, next) => UserModel.findById(req.user._id)
+  .orFail(() => new NotFoundError('Пользователь по заданному id отсутствует в базе'))
   .then((user) => {
+    console.log(user);
     if (user.length === 0) {
       throw new NotFoundError('Пользователей нету, сорян(');
     } res.send(user);
   })
-  .catch(next);
+  .catch((err) => {
+    console.log(err);
+    console.log(req.user);
+    next(err);
+  });
 
 const getProfile = (req, res, next) => UserModel.findById(req.params.id)
   .then((user) => {

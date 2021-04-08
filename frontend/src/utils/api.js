@@ -2,8 +2,6 @@ const BASE_URL = `${window.location.protocol}${
   process.env.REACT_APP_API_URL || "//localhost:3001"
 }`;
 
-const token = localStorage.getItem("token");
-
 class Api {
   constructor(config) {
     this._url = config.url;
@@ -116,11 +114,13 @@ class Api {
   }
 }
 
+// const token = ;
+
 const api = new Api({
   url: `${BASE_URL}/`,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
   },
 });
 

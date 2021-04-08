@@ -44,10 +44,6 @@ function App() {
   }, [isLoggedIn]);
 
   React.useEffect(() => {
-    tockenCheck();
-  }, []);
-
-  React.useEffect(() => {
     if (isLoggedIn) {
       history.push("/main");
     }
@@ -202,14 +198,14 @@ function App() {
       .then((data) => {
         if (data.token) {
           history.push("/main");
+          debugger;
+          setIsLoggedIn(true);
         }
       })
       .catch((err) => console.log(err));
-    setIsLoggedIn(true);
-    setEmail(data.email);
   }
 
-  function tockenCheck() {
+  const tockenCheck = React.useCallback(() => {
     if (token) {
       auth
         .getContent(token)
@@ -217,12 +213,15 @@ function App() {
           if (res) {
             setIsLoggedIn(true);
             setEmail(res.email);
-            history.push("/main");
           }
         })
         .catch((e) => console.log(e));
     }
-  }
+  }, []);
+
+  React.useEffect(() => {
+    tockenCheck();
+  }, [tockenCheck]);
 
   function signOut() {
     localStorage.removeItem("token");
