@@ -197,9 +197,7 @@ function App() {
       .authorize(data.password, data.email)
       .then((data) => {
         if (data.token) {
-          history.push("/main");
-          debugger;
-          setIsLoggedIn(true);
+          tockenCheck();
         }
       })
       .catch((err) => console.log(err));
@@ -212,6 +210,7 @@ function App() {
         .then((res) => {
           if (res) {
             setIsLoggedIn(true);
+            history.push("/main");
             setEmail(res.email);
           }
         })
@@ -227,6 +226,9 @@ function App() {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setEmail("");
+    console.log(isLoggedIn);
+    console.log(email);
+    console.log("хуй");
   }
 
   const [isRegistered, setIsRegistered] = React.useState(false);

@@ -10,6 +10,7 @@ const getUser = (req, res, next) => UserModel.findById(req.user._id)
   .orFail(() => new NotFoundError('Пользователь по заданному id отсутствует в базе'))
   .then((user) => {
     console.log(user);
+    console.log(req.user);
     if (user.length === 0) {
       throw new NotFoundError('Пользователей нету, сорян(');
     } res.send(user);
