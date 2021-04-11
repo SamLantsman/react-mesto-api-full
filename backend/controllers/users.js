@@ -5,6 +5,7 @@ const UserModel = require('../models/users');
 const NotFoundError = require('../errors/not-fount-err');
 const BadRequestError = require('../errors/bad-request-err');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const ConflictError = require('../errors/conflict-err');
 
 const getUser = (req, res, next) => UserModel.findById(req.user._id)
   .orFail(() => new NotFoundError('Пользователь по заданному id отсутствует в базе'))
@@ -22,10 +23,9 @@ const getUser = (req, res, next) => UserModel.findById(req.user._id)
   });
 
 const getProfile = (req, res, next) => UserModel.findById(req.params.id)
+  .orFail(new NotFoundError('Нет такого пользователя, попробуйте другой айди'))
   .then((user) => {
-    if (!user) {
-      throw new NotFoundError('Нет такого пользователя, попробуйте другой айди');
-    } res.send(user);
+    res.send(user);
   })
   .catch((err) => {
     if (err.kind === 'ObjectId') {
@@ -43,12 +43,23 @@ const createUser = (req, res, next) => {
     .then((hash) => UserModel.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      data:
+      {
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        name: user.name,
+        _id: user._id,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
-        return;
-      } next(err);
+      } else if (err.name === 'MongoError') {
+        next(new ConflictError('Пользовотель с таким емейлом уже зарегистрирован. Идите логиньтесь.'));
+      }
+      next(err);
     });
 };
 
@@ -59,10 +70,9 @@ const updateProfile = (req, res, next) => {
     new: true,
     runValidators: true,
   })
+    .orFail(new NotFoundError('Такого кользователя не сущесвует, попробуйте другой айди'))
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такого кользователя не сущесвует, попробуйте другой айди');
-      } res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.reason === null) {
@@ -79,10 +89,9 @@ const updateAvatar = (req, res, next) => {
     new: true,
     runValidators: true,
   })
+    .orFail(new NotFoundError('Такого кользователя не сущесвует, попробуйте другой айди'))
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такого кользователя не сущесвует, попробуйте другой айди');
-      } res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

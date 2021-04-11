@@ -25,10 +25,8 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   CardModel.findById(req.params.cardId)
+    .orFail(new BadRequestError('Нет такой карточки, попробуйте другой айди'))
     .then((card) => {
-      if (!card) {
-        throw new BadRequestError('Нет такой карточки, попробуйте другой айди');
-      }
       if (card.owner.toString() !== req.user._id) {
         throw new BadRequestError('Чужие карточки удалять нельзя');
       } else {
@@ -45,10 +43,9 @@ const deleteCard = (req, res, next) => {
 
 const likeCard = (req, res, next) => CardModel.findByIdAndUpdate(req.params.cardId,
   { $addToSet: { likes: req.user._id } }, { new: true })
+  .orFail(new NotFoundError('Нет такой карточки, попробуйте другой айди'))
   .then((card) => {
-    if (!card) {
-      throw new NotFoundError('Нет такой карточки, попробуйте другой айди');
-    } res.send({
+    res.send({
       message: 'Залайкал карточку, все ОК',
       data: card,
     });
@@ -62,10 +59,9 @@ const likeCard = (req, res, next) => CardModel.findByIdAndUpdate(req.params.card
 
 const dislikeCard = (req, res, next) => CardModel.findByIdAndUpdate(req.params.cardId,
   { $pull: { likes: req.user._id } }, { new: true })
+  .orFail(new NotFoundError('Нет такой карточки, поробуйте другой айди'))
   .then((card) => {
-    if (!card) {
-      throw new NotFoundError('Нет такой карточки, поробуйте другой айди');
-    } res.send({
+    res.send({
       message: 'Лайка больше нет, все ОК',
       data: card,
     });
